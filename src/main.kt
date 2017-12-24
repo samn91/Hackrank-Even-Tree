@@ -3,8 +3,11 @@
  */
 import java.util.*
 
-data class Node(val parent: Int?, val node: Int, var childrenCount: Int)
+data class Node(var parent: Int?, val node: Int, var childrenCount: Int)
 
+fun Node.hasEven() = (childrenCount + 1) % 2 == 0
+
+fun getParentNode(list: MutableList<Node>, parent: Int?) = list.find { parent == it.node }
 fun main(args: Array<String>) {
     val sc = Scanner(System.`in`)
 
@@ -27,12 +30,22 @@ fun main(args: Array<String>) {
         }
 
 
+    var cutCount = 0
+    for (i in nodes.size - 1 downTo 0) {
+        if (nodes[i].hasEven()) {
+            val parentNode = getParentNode(nodes, nodes[i].parent)
+            parentNode?.let { parent ->
+                cutCount++
+                parent.childrenCount -= nodes[i].childrenCount + 1
+            }
+            nodes[i].parent = null
+        }
 
-
-    for (node in nodes) {
-        println("Node is ${node.node} and has ${node.childrenCount} children")
     }
+//
+//    for (node in nodes) {
+//        println("Parent ${node.parent}, Node ${node.node}, children ${node.childrenCount} children")
+//    }
+    println(cutCount)
 }
 
-
-fun getParentNode(list: MutableList<Node>, parent: Int?) = list.find { parent == it.node }
